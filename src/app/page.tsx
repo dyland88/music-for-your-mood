@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel */}
-      <div className="w-1/3 bg-gray-100 p-6 min-w-64">
+      <div className="w-1/3 p-6 min-w-64">
         <Card>
           <CardHeader>
             <CardTitle>How Are You Feeling?</CardTitle>
@@ -59,7 +59,7 @@ export default function Home() {
       </div>
 
       {/* Right Panel */}
-      <div className="w-2/3 bg-white p-6">
+      <div className="w-2/3 p-6">
         <h1 className="font-bold text-xl">Recommended Songs</h1>
         {recommendations.length > 0 ? (
           <ul className="space-y-2">
