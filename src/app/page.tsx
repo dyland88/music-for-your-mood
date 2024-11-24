@@ -12,7 +12,7 @@ import {
 
 export default function Home() {
   const [energy, setEnergy] = useState(50);
-  const [mood, setMood] = useState(50);
+  const [happiness, setHappiness] = useState(50);
   const [loneliness, setLoneliness] = useState(50);
   const [recommendations, setRecommendations] = useState<string[]>([]);
 
@@ -41,9 +41,12 @@ export default function Home() {
               <p className="text-sm text-gray-500">Value: {energy}</p>
             </div>
             <div>
-              <h4>Mood</h4>
-              <Slider value={[mood]} onValueChange={(v) => setMood(v[0])} />
-              <p className="text-sm text-gray-500">Value: {mood}</p>
+              <h4>Happiness</h4>
+              <Slider
+                value={[happiness]}
+                onValueChange={(v) => setHappiness(v[0])}
+              />
+              <p className="text-sm text-gray-500">Value: {happiness}</p>
             </div>
             <div>
               <h4>Loneliness</h4>
