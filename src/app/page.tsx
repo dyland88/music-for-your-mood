@@ -2,13 +2,7 @@
 import React, { useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { generatePlaylist, PlaylistItem } from "./generate-playlist";
@@ -18,7 +12,9 @@ export default function Home() {
   const [happiness, setHappiness] = useState(50);
   const [loneliness, setLoneliness] = useState(50);
   const [recommendations, setRecommendations] = useState<PlaylistItem[]>([]);
+  /* eslint-disable */
   const [sortingAlgorithm, setSortingAlgorithm] = React.useState("quick");
+  /* eslint-enable */
 
   async function handleSubmit(): Promise<void> {
     const playlist = await generatePlaylist(energy, happiness, loneliness);
