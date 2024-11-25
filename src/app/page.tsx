@@ -84,7 +84,9 @@ export default function Home() {
               <li key={index} className="text-gray-700 w-full">
                 <Card>
                   <div className="flex flex-row gap-5 p-3 align-middle overflow-hidden">
-                    <p className="text-gray-400 flex items-center">{index}</p>
+                    <p className="text-gray-400 flex items-center">
+                      {index + 1}
+                    </p>
                     <div className="flex flex-col">
                       <p className="font-bold">{song.title}</p>
                       {song.artists.map((artist, index) => (
