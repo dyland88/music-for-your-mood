@@ -35,6 +35,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^20",
+    "@types/node-fetch": "^2.6.12",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
