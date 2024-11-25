@@ -9,40 +9,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { generatePlaylist } from "./generate-playlist";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { generatePlaylist, PlaylistItem } from "./generate-playlist";
 
 export default function Home() {
   const [energy, setEnergy] = useState(50);
   const [happiness, setHappiness] = useState(50);
   const [loneliness, setLoneliness] = useState(50);
-  const [recommendations, setRecommendations] = useState<
-    { title: string; artist: string }[]
-  >([]);
+  const [recommendations, setRecommendations] = useState<PlaylistItem[]>([]);
+  const [sortingAlgorithm, setSortingAlgorithm] = React.useState("quick");
 
-  const generatePlaylist = () => {
-    setRecommendations([
-      {
-        title: "Not Like us",
-        artist: "KSI",
-      },
-      { title: "Thick of it", artist: "KSI" },
-      { title: "Thick of it", artist: "KSI" },
-    ]);
-  };
+  async function handleSubmit(): Promise<void> {
+    const playlist = await generatePlaylist(energy, happiness, loneliness);
+    console.log(playlist);
+    setRecommendations(playlist);
+  }
 
   return (
-    <div className=" min-w-full flex justify-center">
+    <div className="min-w-full flex justify-center">
       {/* Left Panel */}
-      <div className="  w-80 p-6 ">
+      <div className="w-80 p-6">
         <Card>
           <CardHeader>
             <CardTitle>How Are You Feeling?</CardTitle>
@@ -69,7 +56,21 @@ export default function Home() {
               />
               <p className="text-sm text-gray-500">Value: {loneliness}</p>
             </div>
-            <Button onClick={generatePlaylist}>Generate Playlist</Button>
+            <RadioGroup
+              defaultValue="quick"
+              onValueChange={(value) => setSortingAlgorithm(value)}
+            >
+              <p className=" font-bold">Sorting Algorithm</p>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="quick" id="r1" />
+                <Label htmlFor="r1">Quick Sort</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="merge" id="r2" />
+                <Label htmlFor="r2">Merge Sort</Label>
+              </div>
+            </RadioGroup>
+            <Button onClick={handleSubmit}>Generate Playlist</Button>
           </CardContent>
         </Card>
       </div>
@@ -86,7 +87,11 @@ export default function Home() {
                     <p className="text-gray-400 flex items-center">{index}</p>
                     <div className="flex flex-col">
                       <p className="font-bold">{song.title}</p>
-                      <p className=" text-gray-400">{song.artist}</p>
+                      {song.artists.map((artist, index) => (
+                        <p className=" text-gray-400" key={index}>
+                          {artist}
+                        </p>
+                      ))}
                     </div>
                   </div>
                 </Card>
