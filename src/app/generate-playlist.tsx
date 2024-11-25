@@ -23,15 +23,16 @@ interface UserPreferences {
   happiness: number;
 }
 
-function loadDataset(): TrackData[] {
-  let tracks: TrackData[] = [];
-  fetch("./dataset.csv")
-    .then((response) => response.text())
-    .then((csvData) => {
-      const tracks: TrackData[] = [];
-      const readable = stream.Readable.from([csvData]);
+async function loadDataset(): Promise<TrackData[]> {
+  const response = await fetch("./dataset.csv");
+  const csvData = await response.text();
+  const tracks: TrackData[] = [];
+  const readable = stream.Readable.from([csvData]);
 
-      readable.pipe(csvParser()).on("data", (row) => {
+  return new Promise<TrackData[]>((resolve, reject) => {
+    readable
+      .pipe(csvParser())
+      .on("data", (row) => {
         const track: TrackData = {
           id: row["track_id"],
           name: row["track_name"],
@@ -41,12 +42,15 @@ function loadDataset(): TrackData[] {
           energyL: parseFloat(row["energy"]),
           valence: parseFloat(row["valence"]),
         };
-
         tracks.push(track);
+      })
+      .on("end", () => {
+        resolve(tracks);
+      })
+      .on("error", (err) => {
+        reject(err);
       });
-    });
-  console.log(tracks);
-  return tracks;
+  });
 }
 
 function calculateScore(track: TrackData, preferences: UserPreferences) {
@@ -106,20 +110,19 @@ function mergeSort(
   );
 }
 
-export function generatePlaylist(
+export async function generatePlaylist(
   energy: number,
   happiness: number,
   loneliness: number
-): PlaylistItem[] {
-  const tracks = loadDataset();
-  console.log(tracks);
+): Promise<PlaylistItem[]> {
+  const tracks = await loadDataset();
   const preferences: UserPreferences = {
     energy,
     happiness,
     loneliness,
   };
   const recommendedTracks = mergeSort(tracks, preferences).slice(0, 20);
-
+  console.log(recommendedTracks);
   const playlistItems = recommendedTracks.map((track) => ({
     title: track.name,
     artists: track.artists,
