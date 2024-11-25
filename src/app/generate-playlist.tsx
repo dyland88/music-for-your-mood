@@ -23,29 +23,30 @@ interface UserPreferences {
   happiness: number;
 }
 
-function loadDataset(): Promise<TrackData[]> {
-  return new Promise((resolve, reject) => {
-    fetch("./dataset.csv")
-      .then((response) => response.text())
-      .then((csvData) => {
-        const tracks: TrackData[] = [];
-        const readable = stream.Readable.from([csvData]);
+function loadDataset(): TrackData[] {
+  let tracks: TrackData[] = [];
+  fetch("./dataset.csv")
+    .then((response) => response.text())
+    .then((csvData) => {
+      const tracks: TrackData[] = [];
+      const readable = stream.Readable.from([csvData]);
 
-        readable.pipe(csvParser()).on("data", (row) => {
-          const track: TrackData = {
-            id: row["id"],
-            name: row["name"],
-            artists: row["artists"].split(";"),
-            album: row["album"],
-            liveness: parseFloat(row["liveness"]),
-            energyL: parseFloat(row["energy"]),
-            valence: parseFloat(row["valence"]),
-          };
+      readable.pipe(csvParser()).on("data", (row) => {
+        const track: TrackData = {
+          id: row["track_id"],
+          name: row["track_name"],
+          artists: row["artists"].split(";"),
+          album: row["album_name"],
+          liveness: parseFloat(row["liveness"]),
+          energyL: parseFloat(row["energy"]),
+          valence: parseFloat(row["valence"]),
+        };
 
-          tracks.push(track);
-        });
+        tracks.push(track);
       });
-  });
+    });
+  console.log(tracks);
+  return tracks;
 }
 
 function calculateScore(track: TrackData, preferences: UserPreferences) {
@@ -105,12 +106,13 @@ function mergeSort(
   );
 }
 
-export async function generatePlaylist(
+export function generatePlaylist(
   energy: number,
   happiness: number,
   loneliness: number
-): Promise<PlaylistItem[]> {
-  const tracks = await loadDataset();
+): PlaylistItem[] {
+  const tracks = loadDataset();
+  console.log(tracks);
   const preferences: UserPreferences = {
     energy,
     happiness,
