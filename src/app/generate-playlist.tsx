@@ -1,6 +1,6 @@
 import csvParser from "csv-parser";
-import fetch from 'node-fetch'
-import * as stream from 'stream'
+import fetch from "node-fetch";
+import * as stream from "stream";
 
 interface TrackData {
   id: string;
@@ -25,27 +25,25 @@ interface UserPreferences {
 
 function loadDataset(): Promise<TrackData[]> {
   return new Promise((resolve, reject) => {
-    fetch('./spotify_tracks_dataset.csv')
+    fetch("./dataset.csv")
       .then((response) => response.text())
       .then((csvData) => {
         const tracks: TrackData[] = [];
         const readable = stream.Readable.from([csvData]);
 
-        readable
-          .pipe(csvParser())
-          .on('data', (row) => {
-            const track: TrackData = {
-              id: row['id'],
-              name: row['name'],
-              artists: row['artists'].split(';'),
-              album: row['album'],
-              liveness: parseFloat(row['liveness']),
-              energyL: parseFloat(row['energy']),
-              valence: parseFloat(row['valence']),
-            };
+        readable.pipe(csvParser()).on("data", (row) => {
+          const track: TrackData = {
+            id: row["id"],
+            name: row["name"],
+            artists: row["artists"].split(";"),
+            album: row["album"],
+            liveness: parseFloat(row["liveness"]),
+            energyL: parseFloat(row["energy"]),
+            valence: parseFloat(row["valence"]),
+          };
 
-            tracks.push(track);
-          })
+          tracks.push(track);
+        });
       });
   });
 }
