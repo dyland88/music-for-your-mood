@@ -1,10 +1,8 @@
-import * as fs from 'fs'
-import * as path from 'path'
-import csvParser from 'csv-parser'
+import * as fs from "fs";
+import * as path from "path";
+import csvParser from "csv-parser";
 
-
-interface TrackData
-{
+interface TrackData {
   id: string;
   name: string;
   artists: string[];
@@ -28,7 +26,7 @@ interface UserPreferences {
 function loadDataset(): Promise<TrackData[]> {
   return new Promise((resolve, reject) => {
     // Path to the dataset file
-    const datasetPath = path.join(__dirname, 'spotify_tracks_dataset.csv');
+    const datasetPath = path.join(__dirname, "spotify_tracks_dataset.csv");
     const tracks: TrackData[] = [];
 
     // Create a read stream for the CSV file
@@ -36,35 +34,37 @@ function loadDataset(): Promise<TrackData[]> {
       // Pipe the read stream into the CSV parser
       .pipe(csvParser())
       // On each data event, process a row
-      .on('data', (row) => {
+      .on("data", (row) => {
         // Parse the CSV row into a TrackData object
         const track: TrackData = {
-          id: row['id'],
-          name: row['name'],
-          artists: row['artists'].split(';'),
-          album: row['album'],
-          liveness: parseFloat(row['liveness']),
-          energyL: parseFloat(row['energy']),
-          valence: parseFloat(row['valence']),
+          id: row["id"],
+          name: row["name"],
+          artists: row["artists"].split(";"),
+          album: row["album"],
+          liveness: parseFloat(row["liveness"]),
+          energyL: parseFloat(row["energy"]),
+          valence: parseFloat(row["valence"]),
         };
 
         tracks.push(track);
-      })
-    });
+      });
+  });
 }
 
-function calculateScore(track: TrackData, preferences: UserPreferences)
-{
+function calculateScore(track: TrackData, preferences: UserPreferences) {
   let score = 0;
-  score += Math.abs(track.liveness - (preferences.loneliness / 100.0));
-  score += Math.abs(track.energyL - (preferences.energy / 100.0));
-  score += Math.abs(track.valence - (preferences.happiness / 100.0));
+  score += Math.abs(track.liveness - preferences.loneliness / 100.0);
+  score += Math.abs(track.energyL - preferences.energy / 100.0);
+  score += Math.abs(track.valence - preferences.happiness / 100.0);
 
   return score;
 }
 
-function merge(left:TrackData[], right:TrackData[], preferences:UserPreferences): TrackData[]
-{
+function merge(
+  left: TrackData[],
+  right: TrackData[],
+  preferences: UserPreferences
+): TrackData[] {
   const result: TrackData[] = [];
   let indexLeft = 0;
   let indexRight = 0;
@@ -87,7 +87,10 @@ function merge(left:TrackData[], right:TrackData[], preferences:UserPreferences)
   return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight));
 }
 
-function mergeSort(array: TrackData[], preferences:UserPreferences): TrackData[] {
+function mergeSort(
+  array: TrackData[],
+  preferences: UserPreferences
+): TrackData[] {
   if (array.length <= 1) {
     return array;
   }
@@ -98,9 +101,12 @@ function mergeSort(array: TrackData[], preferences:UserPreferences): TrackData[]
   const right = array.slice(middle);
 
   // Recursively sort the left and right halves and merge them
-  return merge(mergeSort(left, preferences), mergeSort(right, preferences), preferences);
+  return merge(
+    mergeSort(left, preferences),
+    mergeSort(right, preferences),
+    preferences
+  );
 }
-
 
 export async function generatePlaylist(
   energy: number,
@@ -112,10 +118,8 @@ export async function generatePlaylist(
     energy,
     happiness,
     loneliness,
-  }
-
-  const sortedTracks = mergeSort(tracks, preferences);
-  const recommendedTracks = sortedTracks.slice(0, 20);
+  };
+  const recommendedTracks = mergeSort(tracks, preferences).slice(0, 20);
 
   const playlistItems = recommendedTracks.map((track) => ({
     title: track.name,
@@ -123,12 +127,4 @@ export async function generatePlaylist(
   }));
 
   return playlistItems;
-}
-
-interface TrackFeature {
-  id: string;
-  liveness: number;
-  energy: number;
-  valence: number;
-  // Include other features as needed
 }
