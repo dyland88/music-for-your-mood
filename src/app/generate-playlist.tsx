@@ -9,6 +9,7 @@ interface TrackData {
   instrumentalness: number;
   energyL: number;
   valence: number;
+  popularity: number;
 }
 
 export interface PlaylistItem {
@@ -41,6 +42,7 @@ async function loadDataset(): Promise<TrackData[]> {
             instrumentalness: parseFloat(row["instrumentalness"]),
             energyL: parseFloat(row["energy"]),
             valence: parseFloat(row["valence"]),
+            popularity: parseFloat(row["popularity"]),
           };
           tracks.push(track);
         } catch (e) {
@@ -56,12 +58,14 @@ async function loadDataset(): Promise<TrackData[]> {
   });
 }
 
+// For the sorting function, lower score means the track is closer to the target values
 function calculateScore(track: TrackData, preferences: UserPreferences) {
   let score = 0;
-  score += Math.abs(1 - track.instrumentalness - preferences.focused / 100.0);
+  score += Math.abs(track.instrumentalness - preferences.focused / 100.0);
   score += Math.abs(track.energyL - preferences.energy / 100.0);
   score += Math.abs(track.valence - preferences.happiness / 100.0);
-
+  score += Math.random() * 0.05;
+  score -= (track.popularity / 100) * 0.02;
   return score;
 }
 
@@ -130,6 +134,9 @@ export async function generatePlaylist(
     focused,
   };
   const recommendedTracks = mergeSort(tracks, preferences).slice(0, 20);
+  recommendedTracks.forEach((track) => {
+    console.log(calculateScore(track, preferences));
+  });
   const playlistItems = recommendedTracks.map((track) => ({
     title: track.name,
     artists: track.artists,

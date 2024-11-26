@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { generatePlaylist, PlaylistItem } from "./generate-playlist";
+import { motion } from "motion/react";
 
 export default function Home() {
   const [energy, setEnergy] = useState(50);
@@ -16,12 +17,16 @@ export default function Home() {
   const [sortingAlgorithm, setSortingAlgorithm] = useState("quick");
   /* eslint-enable */
   const [loading, setLoading] = useState(false);
+  const [loadedPlayers, setLoadedPlayers] = useState(
+    Array(recommendations.length).fill(false)
+  );
 
   async function handleSubmit(): Promise<void> {
     setLoading(true);
     const playlist = await generatePlaylist(energy, happiness, loneliness);
     console.log(playlist);
     setRecommendations(playlist);
+    setLoadedPlayers(Array(recommendations.length).fill(false));
     setLoading(false);
   }
 
@@ -69,9 +74,17 @@ export default function Home() {
                 <Label htmlFor="r2">Merge Sort</Label>
               </div>
             </RadioGroup>
-            <Button onClick={handleSubmit}>
-              {loading ? "Loading..." : "Generate Playlist"}
-            </Button>
+            <motion.div
+              whileHover={{
+                scale: 1.03,
+              }}
+              whileTap={{ scale: 0.95 }}
+              className="w-[9rem]"
+            >
+              <Button onClick={handleSubmit}>
+                {loading ? "Loading..." : "Generate Playlist"}
+              </Button>
+            </motion.div>
           </CardContent>
         </Card>
       </div>
@@ -88,21 +101,42 @@ export default function Home() {
                     <p className="text-gray-400 flex items-center">
                       {index + 1}
                     </p>
-                    <div className="flex flex-col p-0 m-0">
+                    <div className="flex flex-col p-0 m-0 gap-1">
                       <p className="font-bold">{song.title}</p>
-                      {song.artists.map((artist, index) => (
-                        <p className=" text-gray-400" key={index}>
-                          {artist}
-                        </p>
-                      ))}
-                      <iframe
-                        src={song.link}
-                        width="300"
-                        height="80"
-                        allow="encrypted-media"
-                        style={{ border: "none", overflow: "hidden" }}
-                        className="mt-2 rounded-xl"
-                      ></iframe>
+                      <div className="gap-0 flex flex-col">
+                        {song.artists.map((artist, index) => (
+                          <p className=" text-gray-400" key={index}>
+                            {artist}
+                          </p>
+                        ))}
+                      </div>
+                      {loadedPlayers[index] ? (
+                        <iframe
+                          src={song.link}
+                          width="300"
+                          height="80"
+                          allow="encrypted-media"
+                          style={{ border: "none", overflow: "hidden" }}
+                          className="rounded-xl"
+                        />
+                      ) : (
+                        <motion.div
+                          whileHover={{
+                            scale: 1.03,
+                          }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                            setLoadedPlayers((prev) => {
+                              const newState = [...prev];
+                              newState[index] = true;
+                              return newState;
+                            });
+                          }}
+                          className="w-[300px] h-[80px] rounded-xl bg-accent flex items-center justify-center"
+                        >
+                          Play With Spotify
+                        </motion.div>
+                      )}
                     </div>
                   </div>
                 </Card>
