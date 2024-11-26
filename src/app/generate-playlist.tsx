@@ -6,7 +6,6 @@ interface TrackData {
   id: string;
   name: string;
   artists: string[];
-  album: string;
   liveness: number;
   energyL: number;
   valence: number;
@@ -33,16 +32,19 @@ async function loadDataset(): Promise<TrackData[]> {
     readable
       .pipe(csvParser())
       .on("data", (row) => {
-        const track: TrackData = {
-          id: row["track_id"],
-          name: row["track_name"],
-          artists: row["artists"].split(";"),
-          album: row["album_name"],
-          liveness: parseFloat(row["liveness"]),
-          energyL: parseFloat(row["energy"]),
-          valence: parseFloat(row["valence"]),
-        };
-        tracks.push(track);
+        try {
+          const track: TrackData = {
+            id: row["id"],
+            name: row["name"],
+            artists: (0, eval)("(" + row["artists"] + ")"),
+            liveness: parseFloat(row["liveness"]),
+            energyL: parseFloat(row["energy"]),
+            valence: parseFloat(row["valence"]),
+          };
+          tracks.push(track);
+        } catch (e) {
+          console.log(e);
+        }
       })
       .on("end", () => {
         resolve(tracks);
@@ -55,7 +57,7 @@ async function loadDataset(): Promise<TrackData[]> {
 
 function calculateScore(track: TrackData, preferences: UserPreferences) {
   let score = 0;
-  score += Math.abs(track.liveness - preferences.loneliness / 100.0);
+  score += Math.abs(1 - track.liveness - preferences.loneliness / 100.0);
   score += Math.abs(track.energyL - preferences.energy / 100.0);
   score += Math.abs(track.valence - preferences.happiness / 100.0);
 
@@ -110,19 +112,23 @@ function mergeSort(
   );
 }
 
+// store tracks outside the function to cache it
+let tracks: TrackData[] | null = null;
+
 export async function generatePlaylist(
   energy: number,
   happiness: number,
   loneliness: number
 ): Promise<PlaylistItem[]> {
-  const tracks = await loadDataset();
+  if (!tracks) {
+    tracks = await loadDataset();
+  }
   const preferences: UserPreferences = {
     energy,
     happiness,
     loneliness,
   };
   const recommendedTracks = mergeSort(tracks, preferences).slice(0, 20);
-  console.log(recommendedTracks);
   const playlistItems = recommendedTracks.map((track) => ({
     title: track.name,
     artists: track.artists,
