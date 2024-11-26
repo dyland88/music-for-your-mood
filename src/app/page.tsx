@@ -72,7 +72,7 @@ export default function Home() {
       </div>
 
       {/* Right Panel */}
-      <div className="flex flex-col p-6 w-3/5 max-w-[800px]">
+      <div className="flex flex-col p-6 w-3/5 max-w-[800px] max-h-screen overflow-y-auto">
         <h1 className="font-bold text-xl mb-5">Recommended Songs</h1>
         {recommendations.length > 0 ? (
           <ul className="space-y-2">
@@ -91,14 +91,14 @@ export default function Home() {
                         </p>
                       ))}
                       <iframe
-                      src={song.link}
-                      width="300"
-                      height="80"
-                      frameBorder="0"
-                      allow="encrypted-media"
-                      style={{ border: "none", overflow: "hidden" }}
-                      className="mt-2"
-                    ></iframe>
+                        src={song.link}
+                        width="300"
+                        height="80"
+                        allow="encrypted-media"
+                        allowTransparency={true}
+                        style={{ border: "none", overflow: "hidden" }}
+                        className="mt-2 rounded-xl"
+                      ></iframe>
                     </div>
                   </div>
                 </Card>
