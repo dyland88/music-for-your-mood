@@ -92,7 +92,7 @@ export default function Home() {
                 className="w-[9rem]"
               >
                 <Button onClick={handleSubmit}>
-                  {loading ? "Loading..." : "Generate Playlist"}
+                  {loading ? "Loading Songs..." : "Generate Playlist"}
                 </Button>
               </motion.div>
               {timeElapsed != -1 ? (
