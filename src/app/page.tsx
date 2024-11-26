@@ -35,7 +35,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      <div className="min-w-full h-[3.5rem] bg-card flex justify-center font-bold text-xl items-center border-border border-b-[1px]">
+      <div className="min-w-screen h-[3.5rem] bg-card flex justify-center font-bold text-xl items-center border-border border-b-[1px]">
         <h1>Music for Your Mood</h1>
       </div>
       <main className="min-w-full flex justify-center">
