@@ -83,13 +83,22 @@ export default function Home() {
                     <p className="text-gray-400 flex items-center">
                       {index + 1}
                     </p>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col p-0 m-0">
                       <p className="font-bold">{song.title}</p>
                       {song.artists.map((artist, index) => (
                         <p className=" text-gray-400" key={index}>
                           {artist}
                         </p>
                       ))}
+                      <iframe
+                      src={song.link}
+                      width="300"
+                      height="80"
+                      frameBorder="0"
+                      allow="encrypted-media"
+                      style={{ border: "none", overflow: "hidden" }}
+                      className="mt-2"
+                    ></iframe>
                     </div>
                   </div>
                 </Card>

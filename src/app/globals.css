@@ -79,6 +79,12 @@ body {
   }
 }
 
+iframe {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
 @layer base {
   * {
     @apply border-border;

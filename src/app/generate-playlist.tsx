@@ -14,6 +14,7 @@ interface TrackData {
 export interface PlaylistItem {
   title: string;
   artists: string[];
+  link: string;
 }
 
 interface UserPreferences {
@@ -132,7 +133,9 @@ export async function generatePlaylist(
   const playlistItems = recommendedTracks.map((track) => ({
     title: track.name,
     artists: track.artists,
+    link: "https://open.spotify.com/embed/track/" + track.id,
   }));
 
+  console.log(playlistItems);
   return playlistItems;
 }
