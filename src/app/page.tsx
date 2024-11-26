@@ -11,7 +11,7 @@ import { motion } from "motion/react";
 export default function Home() {
   const [energy, setEnergy] = useState(50);
   const [happiness, setHappiness] = useState(50);
-  const [loneliness, setLoneliness] = useState(50);
+  const [focused, setFocused] = useState(50);
   const [recommendations, setRecommendations] = useState<PlaylistItem[]>([]);
   /* eslint-disable */
   const [sortingAlgorithm, setSortingAlgorithm] = useState("quick");
@@ -20,14 +20,17 @@ export default function Home() {
   const [loadedPlayers, setLoadedPlayers] = useState(
     Array(recommendations.length).fill(false)
   );
+  const [timeElapsed, setTimeElapsed] = useState(-1);
 
   async function handleSubmit(): Promise<void> {
     setLoading(true);
-    const playlist = await generatePlaylist(energy, happiness, loneliness);
+    const { playlistItems: playlist, timeElapsed: sortTime } =
+      await generatePlaylist(energy, happiness, focused, sortingAlgorithm);
     console.log(playlist);
     setRecommendations(playlist);
     setLoadedPlayers(Array(recommendations.length).fill(false));
     setLoading(false);
+    setTimeElapsed(sortTime);
   }
 
   return (
@@ -55,10 +58,10 @@ export default function Home() {
             <div>
               <h4>Focused</h4>
               <Slider
-                value={[loneliness]}
-                onValueChange={(v) => setLoneliness(v[0])}
+                value={[focused]}
+                onValueChange={(v) => setFocused(v[0])}
               />
-              <p className="text-sm text-gray-500">Value: {loneliness}</p>
+              <p className="text-sm text-gray-500">Value: {focused}</p>
             </div>
             <RadioGroup
               defaultValue="quick"
@@ -85,6 +88,11 @@ export default function Home() {
                 {loading ? "Loading..." : "Generate Playlist"}
               </Button>
             </motion.div>
+            {timeElapsed != -1 ? (
+              <p className=" font-medium">
+                {"Sort Time: " + Math.round(timeElapsed) + " ms"}
+              </p>
+            ) : null}
           </CardContent>
         </Card>
       </div>

@@ -123,19 +123,33 @@ let tracks: TrackData[] | null = null;
 export async function generatePlaylist(
   energy: number,
   happiness: number,
-  focused: number
-): Promise<PlaylistItem[]> {
+  focused: number,
+  sortingAlgorithm: string
+): Promise<{ playlistItems: PlaylistItem[]; timeElapsed: number }> {
   if (!tracks) {
     tracks = await loadDataset();
   }
-  const preferences: UserPreferences = {
-    energy,
-    happiness,
-    focused,
-  };
-  const recommendedTracks = mergeSort(tracks, preferences).slice(0, 20);
+  let recommendedTracks: TrackData[] = [];
+  const startTime = performance.now();
+  if (sortingAlgorithm === "merge") {
+    recommendedTracks = mergeSort(tracks, {
+      energy,
+      happiness,
+      focused,
+    }).slice(0, 20);
+  } else if (sortingAlgorithm === "quick") {
+    // switch this out to use quick sort
+    recommendedTracks = mergeSort(tracks, {
+      energy,
+      happiness,
+      focused,
+    }).slice(0, 20);
+  }
+  const endTime = performance.now();
+  const timeElapsed = endTime - startTime;
+
   recommendedTracks.forEach((track) => {
-    console.log(calculateScore(track, preferences));
+    console.log(calculateScore(track, { energy, happiness, focused }));
   });
   const playlistItems = recommendedTracks.map((track) => ({
     title: track.name,
@@ -144,5 +158,5 @@ export async function generatePlaylist(
   }));
 
   console.log(playlistItems);
-  return playlistItems;
+  return { playlistItems, timeElapsed };
 }
