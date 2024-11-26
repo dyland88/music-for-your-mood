@@ -45,7 +45,7 @@ export default function Home() {
               <p className="text-sm text-gray-500">Value: {happiness}</p>
             </div>
             <div>
-              <h4>Loneliness</h4>
+              <h4>Focused</h4>
               <Slider
                 value={[loneliness]}
                 onValueChange={(v) => setLoneliness(v[0])}

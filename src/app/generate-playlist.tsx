@@ -6,7 +6,7 @@ interface TrackData {
   id: string;
   name: string;
   artists: string[];
-  liveness: number;
+  instrumentalness: number;
   energyL: number;
   valence: number;
 }
@@ -17,7 +17,7 @@ export interface PlaylistItem {
 }
 
 interface UserPreferences {
-  loneliness: number;
+  focused: number;
   energy: number;
   happiness: number;
 }
@@ -37,7 +37,7 @@ async function loadDataset(): Promise<TrackData[]> {
             id: row["id"],
             name: row["name"],
             artists: (0, eval)("(" + row["artists"] + ")"),
-            liveness: parseFloat(row["liveness"]),
+            instrumentalness: parseFloat(row["instrumentalness"]),
             energyL: parseFloat(row["energy"]),
             valence: parseFloat(row["valence"]),
           };
@@ -57,7 +57,7 @@ async function loadDataset(): Promise<TrackData[]> {
 
 function calculateScore(track: TrackData, preferences: UserPreferences) {
   let score = 0;
-  score += Math.abs(1 - track.liveness - preferences.loneliness / 100.0);
+  score += Math.abs(1 - track.instrumentalness - preferences.focused / 100.0);
   score += Math.abs(track.energyL - preferences.energy / 100.0);
   score += Math.abs(track.valence - preferences.happiness / 100.0);
 
@@ -118,7 +118,7 @@ let tracks: TrackData[] | null = null;
 export async function generatePlaylist(
   energy: number,
   happiness: number,
-  loneliness: number
+  focused: number
 ): Promise<PlaylistItem[]> {
   if (!tracks) {
     tracks = await loadDataset();
@@ -126,7 +126,7 @@ export async function generatePlaylist(
   const preferences: UserPreferences = {
     energy,
     happiness,
-    loneliness,
+    focused,
   };
   const recommendedTracks = mergeSort(tracks, preferences).slice(0, 20);
   const playlistItems = recommendedTracks.map((track) => ({
