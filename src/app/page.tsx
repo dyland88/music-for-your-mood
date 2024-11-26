@@ -13,13 +13,16 @@ export default function Home() {
   const [loneliness, setLoneliness] = useState(50);
   const [recommendations, setRecommendations] = useState<PlaylistItem[]>([]);
   /* eslint-disable */
-  const [sortingAlgorithm, setSortingAlgorithm] = React.useState("quick");
+  const [sortingAlgorithm, setSortingAlgorithm] = useState("quick");
   /* eslint-enable */
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit(): Promise<void> {
+    setLoading(true);
     const playlist = await generatePlaylist(energy, happiness, loneliness);
     console.log(playlist);
     setRecommendations(playlist);
+    setLoading(false);
   }
 
   return (
@@ -66,7 +69,9 @@ export default function Home() {
                 <Label htmlFor="r2">Merge Sort</Label>
               </div>
             </RadioGroup>
-            <Button onClick={handleSubmit}>Generate Playlist</Button>
+            <Button onClick={handleSubmit}>
+              {loading ? "Loading..." : "Generate Playlist"}
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -95,7 +100,6 @@ export default function Home() {
                         width="300"
                         height="80"
                         allow="encrypted-media"
-                        allowTransparency={true}
                         style={{ border: "none", overflow: "hidden" }}
                         className="mt-2 rounded-xl"
                       ></iframe>
