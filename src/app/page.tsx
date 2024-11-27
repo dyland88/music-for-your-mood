@@ -159,9 +159,6 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <p className=" text-center mt-3 px-5">
-                Made with 🍵 by Dylan Coben, Chris Oeltjen, and Austin VanLoon
-              </p>
             </div>
           ) : (
             <Card>
@@ -171,6 +168,9 @@ export default function Home() {
               </p>
             </Card>
           )}
+          <p className=" text-center mt-3 px-5 text-gray-500">
+            Made with 🍵 by Dylan Coben, Chris Oeltjen, and Austin VanLoon
+          </p>
         </div>
       </main>
     </div>

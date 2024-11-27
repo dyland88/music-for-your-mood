@@ -16,7 +16,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Music For Your Mood",
-  description: "By Dylan, Chris, and Austin",
+  description: "By Dylan Coben, Chris Oeltjen, and Austin VanLoon",
 };
 
 export default function RootLayout({
