@@ -57,7 +57,6 @@ async function loadDataset(): Promise<TrackData[]> {
       });
   });
 }
-
 // For the sorting function, lower score means the track is closer to the target values
 function calculateScore(track: TrackData, preferences: UserPreferences) {
   let score = 0;
@@ -117,6 +116,32 @@ function mergeSort(
   );
 }
 
+function quickSort(
+  arr: TrackData[],
+  preferences: UserPreferences
+): TrackData[] {
+  if (arr.length <= 1) return arr;
+
+  const pivot = arr[arr.length - 1];
+  const pivotScore = calculateScore(pivot, preferences);
+  const left: TrackData[] = [];
+  const right: TrackData[] = [];
+
+  for (let i = 0; i < arr.length - 1; i++) {
+    if (calculateScore(arr[i], preferences) < pivotScore) {
+      left.push(arr[i]);
+    } else {
+      right.push(arr[i]);
+    }
+  }
+
+  return [
+    ...quickSort(left, preferences),
+    pivot,
+    ...quickSort(right, preferences),
+  ];
+}
+
 // store tracks outside the function to cache it
 let tracks: TrackData[] | null = null;
 
@@ -138,8 +163,7 @@ export async function generatePlaylist(
       focused,
     }).slice(0, 20);
   } else if (sortingAlgorithm === "quick") {
-    // switch this out to use quick sort
-    recommendedTracks = mergeSort(tracks, {
+    recommendedTracks = quickSort(tracks, {
       energy,
       happiness,
       focused,
