@@ -12,6 +12,6 @@ Created by Dylan Coben, Chris Oeltjen, and Austin VanLoon
 
 ## Running the Dev Server
 
-Install dependencies using `npm install`
+Install dependencies using `npm install --legacy-peer-deps`
 
 Run the command `npm run dev` and open http://localhost:3000/ in your browser.
